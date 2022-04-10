@@ -1,0 +1,37 @@
+.center {text-align:center}
+.menu {float: left; max-width: 150px;}
+.content {text-align:center; margin-left: 150px;}
+
+body         { background-color: gold; }
+
+img {border-style: none}
+
+table {border-style: ridge; border-color: gray; margin-left:auto; margin-right:auto;}
+tr {border-style: groove; border-color: gray;}
+th {border-style: groove; border-color: gray;}
+td {border-style: groove; border-color: gray;}
+
+form { border-style: solid; border-width: 1px; border-color: black; display: table; margin-left:auto; margin-right:auto; padding:5px 5px 5px 5px; background-color: goldenrod;}
+
+/* bigger sizes to be finger friendly */
+/*input[type="submit"] { min-height: 1cm;}
+input[type="button"] { min-height: 1cm;}
+input[type="text"] { min-height: 1cm;}*/
+input { min-height: 1cm; min-width: 1cm;}
+select { min-height: 1cm;}
+
+.xmlicon,.xmlicon:link,.xmlicon:visited {color:white; background-color: orange; border:2px outset #ffc8a4; text-decoration:none; 
+font:bold 0.6em sans-serif; padding:0px 3px 0px 5px; letter-spacing:0;}
+
+.icalicon,.icalicon:link,.icalicon:visited {color:white; background-color: green; border:2px outset #ffc8a4; text-decoration:none; 
+font:bold 0.6em sans-serif; padding:0px 3px 0px 5px; letter-spacing:0;}
+
+.txticon,.txticon:link,.txticon:visited {color:white; background-color: blue; border:2px outset #ffc8a4; text-decoration:none; 
+font:bold 0.6em sans-serif; padding:0px 3px 0px 5px; letter-spacing:0;}
+
+.csvicon,.csvicon:link,.csvicon:visited {color:white; background-color: red; border:2px outset #ffc8a4; text-decoration:none; 
+font:bold 0.6em sans-serif; padding:0px 3px 0px 5px; letter-spacing:0;}
+
+.formrow {text-align: left; padding-bottom: 5px;}
+.formlabel {float: left; min-width: 150px;}
+

@@ -1,0 +1,31 @@
+Bugs
+----
+- check new product name for duplicated, don't insert, do update
+- check units match baseline when using inventory mode
+- check new product amount and units are recorded correctly
+- for baseline, check Fill to Amount (Max) to be greater than zero and gteq Restock Amount (Min) during updates
+
+Settings
+--------
+- Force lock between generic and item names (old behavior)
+- Require compatible units between inventory and baseline (and list?)
+- Show/hide notes (ability to override for the session)
+
+New Features (Next Release)
+--------------------------
+- Move between lists
+- filter list based on input
+- "ordered" status
+
+Long Term Goals
+---------------
+- In shopping mode, check boxes and then submit when done, removing from the list
+- Real time check box sync for shopping so you can divide and conquer
+- Keep purchase history (add to inventory record)
+- Repeatable/storable lists, option to add all or just check against inventory (if enabled)
+- Add item amount/unit smartness based on what other users have entered
+- Add section of store to product
+- Handle typical expiration time
+- Recipe support (RecipeML?)
+  - http://www.recipebridge.com/api
+  - http://api.bigoven.com/documentation
