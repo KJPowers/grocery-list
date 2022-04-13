@@ -1,2 +1,2 @@
-# phpShoppingList
-A PHP shopping list using https://sourceforge.net/projects/grocery-list/ as a starting point.
+# grocery-list
+An updated version of the shopping list program originally located at https://sourceforge.net/projects/grocery-list/
