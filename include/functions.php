@@ -63,9 +63,9 @@ function form_gen($list, $submit, $action="") {
         $label = $item[1];
         $html = $item[2];
         print "<div class='formrow'><label class='formlabel' for='$id'>$label:</label> <span>$html</span>";
-        if ($id == count) {
-		print "<script type='text/javascript'> incrementor('count'); </script>";
-	}
+//        if ($id == count) {
+//		print "<script type='text/javascript'> incrementor('count'); </script>";
+//	}
         print "</div>\n";
     }
     print "<p>" . $submit . "</p>";
