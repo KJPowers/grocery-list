@@ -58,6 +58,7 @@ if (isset($_REQUEST['submit'])) {
 	if (empty($prid)) {
             $prid = add_product($db, $newcat);
 	}
+        print "<p>here i am!</p>";
         $id = add_update_item($db, $id, $prid, $itemname, $size, $units, $upc, $priority);
         print "<p>Updated item.</p>";
     }

@@ -223,7 +223,7 @@ function add_item($db, $productid, $itemname='', $size='', $units='', $upc='', $
         print "<p>ERROR: You are limited to $ITEM_LIMIT products.</p>";
         return NULL;
     }
-    $query = sprintf("INSERT INTO items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s,acctid=%s", $db->quote($upc), $db->quote($itemname),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID));
+    $query = sprintf("INSERT INTO items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,acctid=%s", $upc===''?'null':$db->quote($upc), $db->quote($itemname),  $size===''?'null':$db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($GLIST_ACCT_ID));
     $db->exec($query);
     return dboneshot($db, sprintf("SELECT itemid FROM items WHERE acctid=%s AND itemname=%s", $db->quote($GLIST_ACCT_ID), $db->quote($itemname)));
 }
@@ -282,15 +282,23 @@ function update_similar_listitems_from_listitemid($db, $listitemid, $typelist, $
 function add_update_item($db, $id, $productid, $name='', $size='', $units='', $upc='', $priority='') {
         if (empty($id)) {
             // do insert
+print "<p>trying to add item</p>";
             return add_item($db, $productid, $name, $size, $units, $upc, $priority);
         } else {
             // do update
+print "<p>trying to update item</p>";
             global $GLIST_ACCT_ID;
             if (!acl_modify($GLIST_ACCT_ID))
                 return NULL;
-            if($db->exec(sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND itemid=%s", $db->quote($upc), $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id)))) {
+            $query = sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND itemid=%s", $db->quote($upc), $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id));
+//            if($db->exec(sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND itemid=%s", $db->quote($upc), $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id)))) {
+try {
+            if($db->exec($query)) {
                 return $id;
             }
+} catch (PDOException $e) {
+    print "<p>Query error:$e->getMessage()</p>";
+}
         }
     return NULL;
 }
