@@ -208,7 +208,7 @@ function add_product($db, $name, $priority='item', $expiration='') {
         print "<p>ERROR: You are limited to $PRODUCT_LIMIT products.</p>";
         return NULL;
     }
-    $db->exec(sprintf("INSERT INTO products SET productname=%s,priority=%s,expiration=%s,acctid=%s", $db->quote($name),  $db->quote($priority),  $db->quote($expiration), $db->quote($GLIST_ACCT_ID)));
+    $db->exec(sprintf("INSERT INTO products SET productname=%s,prioritytype=%s,acctid=%s", $db->quote($name),  $db->quote($priority),  $db->quote($GLIST_ACCT_ID)));
     $query = sprintf("SELECT productid FROM products WHERE acctid=%s AND productname=%s", $db->quote($GLIST_ACCT_ID), $db->quote($name));
     return dboneshot($db, $query);
 }
@@ -336,7 +336,7 @@ function add_update_product($db, $id, $name, $priority='item', $expiration='') {
             global $GLIST_ACCT_ID;
             if (!acl_modify($GLIST_ACCT_ID))
                 return NULL;
-            if($db->exec(sprintf("UPDATE products SET productname=%s,priority=%s,expiration=%s WHERE acctid=%s AND productid=%s", $db->quote($name), $db->quote($priority),$db->quote($expiration), $db->quote($GLIST_ACCT_ID), $db->quote($id)))) {
+            if($db->exec(sprintf("UPDATE products SET productname=%s,prioritytype=%s WHERE acctid=%s AND productid=%s", $db->quote($name), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id)))) {
                 return $id;
             }
         }
@@ -426,11 +426,15 @@ function dbexist($db, $query) {
 
 function dboneshot($db, $query) {
 	$tempresult = $db->query($query);
+//print "<p>dboneshot 0 ($query)</p>";
         if (empty($tempresult))
             return NULL;
+//print "<p>dboneshot 1</p>";
         if ($tempresult->rowCount() == 0)
             return NULL;
+//print "<p>dboneshot 2</p>";
 	$result = $tempresult->fetch();
+//print "<p>dboneshot 3</p>";
 	return $result[0];
 }
 

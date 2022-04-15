@@ -46,8 +46,12 @@ if (isset($_REQUEST['submit'])) {
 	$newcat = $_REQUEST['newcat'];
 
         $id = add_update_product($db, $id, $_REQUEST['newcat']);
+
         if ($id === NULL) {
             print "<p>query failed 2</p>";
+        }
+        else {
+            print "<p>product added/edited</p>";
         }
     }
 }
