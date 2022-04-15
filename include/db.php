@@ -73,9 +73,15 @@ function get_view_shop_by_listid($db, $id, $type) {
     global $GLIST_ACCT_ID;
     if (!acl_read($GLIST_ACCT_ID))
         return NULL;
-    $q = "SELECT *,count(*) as count, count(*)*size as total from listitems LEFT JOIN products USING (productid) WHERE listitems.acctid=%s AND listid=%s AND type=%s GROUP BY productid, units, size";
+//    $q = "SELECT *,count(*) as count, count(*)*size as total from listitems LEFT JOIN products USING (productid) WHERE listitems.acctid=%s AND listid=%s AND type=%s GROUP BY productid, units, size";
+    $q = "SELECT *,'0' as count, '' as total from listitems LEFT JOIN products USING (productid) WHERE listitems.acctid=%s AND listid=%s AND type=%s";
     $query = sprintf($q, $db->quote($GLIST_ACCT_ID), $db->quote($id), $db->quote($type));
+//print "<p>query: $query</p>";
+  try {
     return $db->query($query);
+  } catch (PDOException $e) {
+    echo 'query error: ' . $e->getMessage();
+  }
 }
 
 function get_view_baseline_by_listid($db, $id) {
@@ -164,9 +170,14 @@ function get_listitems_by_id($db, $id, $typelist) {
     global $GLIST_ACCT_ID;
     if (!acl_read($GLIST_ACCT_ID))
         return NULL;
-    $text = "SELECT *,count(*) as count FROM listitems LEFT JOIN products USING (productid) WHERE products.acctid=%s AND listitems.acctid=%s AND listid='%s' AND type IN ('%s') GROUP BY productid, size, units ORDER BY productname";
+//    $text = "SELECT *,count(*) as count FROM listitems LEFT JOIN products USING (productid) WHERE products.acctid=%s AND listitems.acctid=%s AND listid='%s' AND type IN ('%s') GROUP BY productid, size, units ORDER BY productname";
+    $text = "SELECT *,1 as count FROM listitems LEFT JOIN products USING (productid) WHERE products.acctid=%s AND listitems.acctid=%s AND listid='%s' AND type IN ('%s')";
     $query = sprintf($text, $db->quote($GLIST_ACCT_ID), $db->quote($GLIST_ACCT_ID), $id, implode("','", $typelist));
+  try {
     return $db->query($query);
+  } catch (PDOException $e) {
+    print '<p>Query error: ' . $e->getMessage() . '</p>';
+  }
 }
 
 function get_productid_by_upc($db, $upc) {
@@ -223,8 +234,13 @@ function add_item($db, $productid, $itemname='', $size='', $units='', $upc='', $
         print "<p>ERROR: You are limited to $ITEM_LIMIT products.</p>";
         return NULL;
     }
-    $query = sprintf("INSERT INTO items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,acctid=%s", $upc===''?'null':$db->quote($upc), $db->quote($itemname),  $size===''?'null':$db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($GLIST_ACCT_ID));
+    $query = sprintf("INSERT INTO items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,acctid=%s", $upc===''?'null':$db->quote($upc), $db->quote($itemname), $size===''?'null':$db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($GLIST_ACCT_ID));
+//print "<p>query: $query";
+  try {
     $db->exec($query);
+  } catch (PDOException $e) {
+    echo 'Query error: ' . $e->getMessage() . '</p>';
+  }
     return dboneshot($db, sprintf("SELECT itemid FROM items WHERE acctid=%s AND itemname=%s", $db->quote($GLIST_ACCT_ID), $db->quote($itemname)));
 }
 
@@ -282,23 +298,23 @@ function update_similar_listitems_from_listitemid($db, $listitemid, $typelist, $
 function add_update_item($db, $id, $productid, $name='', $size='', $units='', $upc='', $priority='') {
         if (empty($id)) {
             // do insert
-print "<p>trying to add item</p>";
+//print "<p>trying to add item</p>";
             return add_item($db, $productid, $name, $size, $units, $upc, $priority);
         } else {
             // do update
-print "<p>trying to update item</p>";
+//print "<p>trying to update item</p>";
             global $GLIST_ACCT_ID;
             if (!acl_modify($GLIST_ACCT_ID))
                 return NULL;
-            $query = sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND itemid=%s", $db->quote($upc), $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id));
-//            if($db->exec(sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND itemid=%s", $db->quote($upc), $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($id)))) {
-try {
+            $query = sprintf("UPDATE items SET upc=%s,itemname=%s,size=%s,units=%s,productid=%s WHERE acctid=%s AND itemid=%s", $upc===''?'null':$db->quote($upc), $db->quote($name),  $size===''?'null':$db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($GLIST_ACCT_ID), $db->quote($id));
+//print "<p>query: $query</p>";
+  try {
             if($db->exec($query)) {
                 return $id;
             }
-} catch (PDOException $e) {
-    print "<p>Query error:$e->getMessage()</p>";
-}
+  } catch (PDOException $e) {
+    print "<p>Query error:" . $e->getMessage() . "</p>";
+  }
         }
     return NULL;
 }
@@ -312,10 +328,15 @@ function add_update_item_by_upc($db, $upc, $productid, $name='', $size='', $unit
             global $GLIST_ACCT_ID;
             if (!acl_modify($GLIST_ACCT_ID))
                 return NULL;
-            if($db->exec(sprintf("UPDATE items SET itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND upc=%s", $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($upc)))) {
+            $query = sprintf("UPDATE items SET itemname=%s,size=%s,units=%s,productid=%s,priority=%s WHERE acctid=%s AND upc=%s", $db->quote($name),  $db->quote($size), $db->quote($units), $db->quote($productid), $db->quote($priority), $db->quote($GLIST_ACCT_ID), $db->quote($upc));
+//print "<p>query: $query</p>";
+  try {
+            if($db->exec($query)) {
                 return $id;
             }
-        }
+  } catch (PDOException $e) {
+    echo '<p>Query error: ' . $e->getMessage() . "</p>";
+  }        }
     return NULL;
 }
 
